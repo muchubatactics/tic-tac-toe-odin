@@ -1,5 +1,5 @@
 const gameBoard = (function(doc, id){
-	let gameArray = ['x', 'o', 'x', 'o', 'x', 'o', 'x', 'o', 'x'];
+	let gameArray = ['', '', '', '', '', '', '', '', ''];
 
 	const render = function(){
 		if ( !"querySelector" in doc) return console.log("error");
@@ -10,16 +10,56 @@ const gameBoard = (function(doc, id){
 			div.innerHTML = char;
 			htmlBoard.appendChild(div);
 		}
-
+		
 	};	
 	return {
 		gameArray,
 		render,
-
+		
 	};
 })(document, "#game-board");
 
 gameBoard.render();
+
+
+const player = (function(){
+	let boardDivs = document.querySelectorAll("#game-board > div");
+	console.log(boardDivs);
+	
+	for (let div of Array.from(boardDivs))
+	{
+		console.log("here");
+		div.addEventListener("click", play);
+	}
+
+	function play()
+	{
+		console.log(this);
+	}
+	
+	return {
+		play,
+		
+	};
+})();
+
+function createPlayer(name)
+{
+	return {name};
+}
+
+const playerX = createPlayer("X");
+const playerO = createPlayer("O"); 
+Object.setPrototypeOf(playerX, player);
+Object.setPrototypeOf(playerO, player);
+
+const game = (function(){
+	
+	return {
+
+	};
+})();
+
 
 // Set up your project with HTML, CSS and Javascript files and get the Git repo all set up.
 // You’re going to store the gameboard as an array inside of a Gameboard object, so start there! Your players are also going to be stored in objects, and you’re probably going to want an object to control the flow of the game itself.
