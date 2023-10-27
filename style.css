@@ -7,3 +7,21 @@
 #game-board > div {
     height: 100px;
 }
+
+.init-button {
+    height: 100px;
+    width: 500px;
+    margin:50px;
+}
+
+.play-div {
+    height: 100px;
+    width: 500px;
+    margin:50px;
+    text-align: center;
+}
+
+.sample {
+    display: flex;
+    flex-direction: row;
+}

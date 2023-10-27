@@ -19,16 +19,11 @@ const gameBoard = (function(doc, id){
 	};
 })(document, "#game-board");
 
-gameBoard.render();
-
-
 const player = (function(){
 	let boardDivs = document.querySelectorAll("#game-board > div");
-	console.log(boardDivs);
 	
 	for (let div of Array.from(boardDivs))
 	{
-		console.log("here");
 		div.addEventListener("click", play);
 	}
 
@@ -53,12 +48,68 @@ const playerO = createPlayer("O");
 Object.setPrototypeOf(playerX, player);
 Object.setPrototypeOf(playerO, player);
 
-const game = (function(){
-	
-	return {
+const game = (function(gameBoard, playerX, playerO){
 
+	let decider = 0;
+	let sampleDiv = document.querySelector(".sample");
+	let xDiv = document.createElement("div");
+	xDiv.classList.add("play-div");
+	xDiv.textContent = `Player ${playerX.name}`;
+	
+	
+	
+	function playHH()
+	{
+		let oDiv = document.createElement("div");
+		oDiv.classList.add("play-div");
+		oDiv.textContent = `Player ${playerO.name}`;
+		sampleDiv.appendChild(xDiv);
+		sampleDiv.appendChild(oDiv);
+		gameBoard.render();
+	}
+
+	function init()
+	{
+		let humanButton = document.createElement("button");
+		humanButton.classList.add("init-button");
+		humanButton.textContent = "Play Against Human";
+		let compButton = document.createElement("button");
+		compButton.classList.add("init-button");
+		compButton.textContent = "Play against Computer"
+
+
+		humanButton.addEventListener("click", () => {
+			decider = 1;
+			humanButton.style = "display: none";
+			compButton.style = "display: none";
+			playHH();
+		});
+		compButton.addEventListener("click", () => {
+			decider = 2;
+			humanButton.style = "display: none";
+			compButton.style = "display: none";
+		});
+
+		sampleDiv.appendChild(humanButton);
+		sampleDiv.appendChild(compButton);
+
+	}
+
+
+
+
+	return {
+		init,
 	};
-})();
+})(gameBoard, playerX, playerO);
+
+game.init();
+
+
+// gameBoard.render();
+
+
+
 
 
 // Set up your project with HTML, CSS and Javascript files and get the Git repo all set up.
