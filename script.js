@@ -1,20 +1,30 @@
 const gameBoard = (function(doc, id){
 	let gameArray = ['', '', '', '', '', '', '', '', ''];
+	let htmlBoard = doc.querySelector(id);
 
 	const render = function(){
 		if ( !"querySelector" in doc) return console.log("error");
-		let htmlBoard = doc.querySelector(id);
-		for (let char of gameArray)
+		for (let i = 0; i < gameArray.length; i++)
 		{
 			let div = doc.createElement("div");
-			div.innerHTML = char;
+			div.setAttribute("data-pos", `${i}`);
+			div.innerHTML = '';
 			htmlBoard.appendChild(div);
 		}
 		
-	};	
+	};
+	
+	const refresh = function (){
+		let boardDivs = document.querySelectorAll("#game-board > div");
+		for (let i = 0; i < gameArray.length; ++i)
+		{
+			boardDivs[i].textContent = gameArray[i];
+		}
+	};
 	return {
 		gameArray,
 		render,
+		refresh,
 		
 	};
 })(document, "#game-board");
