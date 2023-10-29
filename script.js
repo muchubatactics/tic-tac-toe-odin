@@ -29,24 +29,46 @@ const gameBoard = (function(doc, id){
 	};
 })(document, "#game-board");
 
-const player = (function(){
-	let boardDivs = document.querySelectorAll("#game-board > div");
-	
-	for (let div of Array.from(boardDivs))
-	{
-		div.addEventListener("click", play);
-	}
+const player = (function(gameboard){
+	let boardDivs;
+	let current, xdiv, odiv, player1, player2;
+	const listSetup = function(){
+		boardDivs = document.querySelectorAll("#game-board > div");
+		for (let div of Array.from(boardDivs))
+		{
+			div.addEventListener("click", play);
+		}
+	};
 
 	function play()
 	{
-		console.log(this);
+		gameboard.gameArray[Number(this.getAttribute("data-pos"))];
+		gameboard.refresh();
+		switchEmphasis(xdiv, odiv)
+
+	}
+	function switchEmphasis(div1, div2)
+	{
+		if ("emphasis" in div1.classList)
+		{
+			div1.classList.remove("emphasis");
+			div2.classList.add("emphasis");
+		}
+		else
+		{
+			div2.classList.remove("emphasis");
+			div1.classList.add("emphasis");
+		}
 	}
 	
 	return {
 		play,
-		
+		listSetup,
+		player1, player2,
+		xdiv, odiv,
+		current
 	};
-})();
+})(gameBoard);
 
 function createPlayer(name)
 {
@@ -65,6 +87,7 @@ const game = (function(gameBoard, playerX, playerO){
 	let xDiv = document.createElement("div");
 	xDiv.classList.add("play-div");
 	xDiv.textContent = `Player ${playerX.name}`;
+	xDiv.classList.add("emphasis");
 	
 	
 	
@@ -76,6 +99,17 @@ const game = (function(gameBoard, playerX, playerO){
 		sampleDiv.appendChild(xDiv);
 		sampleDiv.appendChild(oDiv);
 		gameBoard.render();
+		playerX.listSetup();
+		
+		player.xdiv = xDiv;
+		player.odiv = oDiv;
+
+		player.player1 = playerX;
+		player.player2 = playerO;
+		player.current = playerX;
+
+
+
 	}
 
 	function init()
