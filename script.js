@@ -21,10 +21,16 @@ const gameBoard = (function(doc, id){
 			boardDivs[i].textContent = gameArray[i];
 		}
 	};
+
+	const checkWin = function(){
+
+	};
+
 	return {
 		gameArray,
 		render,
 		refresh,
+		checkWin,
 		
 	};
 })(document, "#game-board");
@@ -92,31 +98,40 @@ const game = (function(gameBoard, playerX, playerO){
 		gameBoard.render();
 		let boardDivs = player.listSetup();
 		let current = playerX;
+
+		const eventFtn = function(){
+			if (gameBoard.gameArray[Number(this.getAttribute("data-pos"))] != '') return;
+			gameBoard.gameArray[Number(this.getAttribute("data-pos"))] = current.name;
+			gameBoard.refresh();
+			if (gameBoard.checkWin())
+			{
+				for(let x of boardDivs)
+				{
+					x.removeEventListener("click", eventFtn);
+				}
+				announceWinner(current);
+			}
+			if (Array.from(xDiv.classList).indexOf("emphasis") != -1)
+			{
+				xDiv.classList.remove("emphasis");
+				oDiv.classList.add("emphasis");
+				current = playerO;
+			}
+			else
+			{
+				oDiv.classList.remove("emphasis");
+				xDiv.classList.add("emphasis");
+				current = playerX;
+			}
+		};
+
 		for (let div of Array.from(boardDivs))
 		{
-			div.addEventListener("click", () => {
-				gameBoard.gameArray[Number(div.getAttribute("data-pos"))] = current.name;
-				gameBoard.refresh();
-				if (Array.from(xDiv.classList).indexOf("emphasis") != -1)
-				{
-					xDiv.classList.remove("emphasis");
-					oDiv.classList.add("emphasis");
-					current = playerO;
-				}
-				else
-				{
-					oDiv.classList.remove("emphasis");
-					xDiv.classList.add("emphasis");
-					current = playerX;
-				}
-			});
+			div.addEventListener("click", eventFtn);
 		}
-		
-
 
 	}
 
-	
 
 	function init()
 	{
@@ -145,7 +160,9 @@ const game = (function(gameBoard, playerX, playerO){
 
 	}
 
+	const announceWinner = function(player){
 
+	}; 
 
 
 	return {
