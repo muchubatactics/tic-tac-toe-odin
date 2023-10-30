@@ -6,6 +6,7 @@
 
 #game-board > div {
     height: 100px;
+    text-align: center;
 }
 
 .init-button {
@@ -28,4 +29,12 @@
 
 .emphasis {
     background-color: aqua;
+}
+
+.winner-div {
+    width: 100%;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: large;
+
 }

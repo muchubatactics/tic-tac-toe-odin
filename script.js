@@ -23,7 +23,30 @@ const gameBoard = (function(doc, id){
 	};
 
 	const checkWin = function(){
-
+		let len = gameArray.filter((x) => x != '').length;
+		if (len < 5) return 0;
+		else
+		{
+			if(
+				(gameArray[0] == gameArray[1] && gameArray[1] == gameArray[2] && gameArray[2] != '') ||
+				(gameArray[3] == gameArray[4] && gameArray[4] == gameArray[5] && gameArray[5] != '') ||
+				(gameArray[6] == gameArray[7] && gameArray[7] == gameArray[8] && gameArray[8] != '') ||
+				(gameArray[0] == gameArray[3] && gameArray[3] == gameArray[6] && gameArray[6] != '') ||
+				(gameArray[1] == gameArray[4] && gameArray[4] == gameArray[7] && gameArray[7] != '') ||
+				(gameArray[2] == gameArray[5] && gameArray[5] == gameArray[8] && gameArray[8] != '') ||
+				(gameArray[0] == gameArray[4] && gameArray[4] == gameArray[8] && gameArray[8] != '') ||
+				(gameArray[2] == gameArray[4] && gameArray[4] == gameArray[6] && gameArray[6] != '') 
+			)
+			{
+				return 1;
+			}
+			else
+			{
+				if (len == 9) return 2;
+				return 0;
+			}
+			
+		}
 	};
 
 	return {
@@ -40,29 +63,7 @@ const player = (function(){
 		return document.querySelectorAll("#game-board > div");
 	};
 
-	// function play()
-	// {
-	// 	gameboard.gameArray[Number(this.getAttribute("data-pos"))];
-	// 	gameboard.refresh();
-	// 	switchEmphasis(xdiv, odiv);
-
-	// }
-	// function switchEmphasis(div1, div2)
-	// {
-	// 	if ("emphasis" in div1.classList)
-	// 	{
-	// 		div1.classList.remove("emphasis");
-	// 		div2.classList.add("emphasis");
-	// 	}
-	// 	else
-	// 	{
-	// 		div2.classList.remove("emphasis");
-	// 		div1.classList.add("emphasis");
-	// 	}
-	// }
-	
 	return {
-		// play,
 		listSetup,
 	};
 })();
@@ -103,13 +104,14 @@ const game = (function(gameBoard, playerX, playerO){
 			if (gameBoard.gameArray[Number(this.getAttribute("data-pos"))] != '') return;
 			gameBoard.gameArray[Number(this.getAttribute("data-pos"))] = current.name;
 			gameBoard.refresh();
-			if (gameBoard.checkWin())
+			let val = gameBoard.checkWin();
+			if (val)
 			{
 				for(let x of boardDivs)
 				{
 					x.removeEventListener("click", eventFtn);
 				}
-				announceWinner(current);
+				return announceWinner(current, val);
 			}
 			if (Array.from(xDiv.classList).indexOf("emphasis") != -1)
 			{
@@ -160,7 +162,19 @@ const game = (function(gameBoard, playerX, playerO){
 
 	}
 
-	const announceWinner = function(player){
+	const announceWinner = function(player, val){
+		let div = document.createElement("div");
+		let body = document.querySelector("body");
+		if (val == 2)
+		{
+			div.textContent = `it's a tie`;	
+		}
+		else
+		{
+			div.textContent = `Player ${player.name} wins`;	
+		}
+		div.classList.add("winner-div");
+		body.appendChild(div);
 
 	}; 
 
