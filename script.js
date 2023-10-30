@@ -29,46 +29,37 @@ const gameBoard = (function(doc, id){
 	};
 })(document, "#game-board");
 
-const player = (function(gameboard){
-	let boardDivs;
-	let current, xdiv, odiv, player1, player2;
+const player = (function(){
 	const listSetup = function(){
-		boardDivs = document.querySelectorAll("#game-board > div");
-		for (let div of Array.from(boardDivs))
-		{
-			div.addEventListener("click", play);
-		}
+		return document.querySelectorAll("#game-board > div");
 	};
 
-	function play()
-	{
-		gameboard.gameArray[Number(this.getAttribute("data-pos"))];
-		gameboard.refresh();
-		switchEmphasis(xdiv, odiv)
+	// function play()
+	// {
+	// 	gameboard.gameArray[Number(this.getAttribute("data-pos"))];
+	// 	gameboard.refresh();
+	// 	switchEmphasis(xdiv, odiv);
 
-	}
-	function switchEmphasis(div1, div2)
-	{
-		if ("emphasis" in div1.classList)
-		{
-			div1.classList.remove("emphasis");
-			div2.classList.add("emphasis");
-		}
-		else
-		{
-			div2.classList.remove("emphasis");
-			div1.classList.add("emphasis");
-		}
-	}
+	// }
+	// function switchEmphasis(div1, div2)
+	// {
+	// 	if ("emphasis" in div1.classList)
+	// 	{
+	// 		div1.classList.remove("emphasis");
+	// 		div2.classList.add("emphasis");
+	// 	}
+	// 	else
+	// 	{
+	// 		div2.classList.remove("emphasis");
+	// 		div1.classList.add("emphasis");
+	// 	}
+	// }
 	
 	return {
-		play,
+		// play,
 		listSetup,
-		player1, player2,
-		xdiv, odiv,
-		current
 	};
-})(gameBoard);
+})();
 
 function createPlayer(name)
 {
@@ -99,18 +90,33 @@ const game = (function(gameBoard, playerX, playerO){
 		sampleDiv.appendChild(xDiv);
 		sampleDiv.appendChild(oDiv);
 		gameBoard.render();
-		playerX.listSetup();
+		let boardDivs = player.listSetup();
+		let current = playerX;
+		for (let div of Array.from(boardDivs))
+		{
+			div.addEventListener("click", () => {
+				gameBoard.gameArray[Number(div.getAttribute("data-pos"))] = current.name;
+				gameBoard.refresh();
+				if (Array.from(xDiv.classList).indexOf("emphasis") != -1)
+				{
+					xDiv.classList.remove("emphasis");
+					oDiv.classList.add("emphasis");
+					current = playerO;
+				}
+				else
+				{
+					oDiv.classList.remove("emphasis");
+					xDiv.classList.add("emphasis");
+					current = playerX;
+				}
+			});
+		}
 		
-		player.xdiv = xDiv;
-		player.odiv = oDiv;
-
-		player.player1 = playerX;
-		player.player2 = playerO;
-		player.current = playerX;
-
 
 
 	}
+
+	
 
 	function init()
 	{
