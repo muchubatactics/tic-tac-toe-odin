@@ -134,6 +134,78 @@ const game = (function(gameBoard, playerX, playerO){
 
 	}
 
+	const playHC = function(){
+		let oDiv = document.createElement("div");
+		oDiv.classList.add("play-div");
+		oDiv.textContent = `Computer`;
+		sampleDiv.appendChild(xDiv);
+		sampleDiv.appendChild(oDiv);
+		gameBoard.render();
+
+		let boardDivs = player.listSetup();
+		let current = playerX;
+		
+		const eventListenOn = function() {
+			for (let div of Array.from(boardDivs))
+			{
+				div.addEventListener("click", eventFtn);
+			}
+		};
+		const eventListenOff = function() {
+			for(let x of boardDivs)
+			{
+				x.removeEventListener("click", eventFtn);
+			}
+		};
+		
+
+		const eventFtn = function(){
+			console.log("heh1");
+			if (gameBoard.gameArray[Number(this.getAttribute("data-pos"))] != '') return;
+			eventListenOff();
+			gameBoard.gameArray[Number(this.getAttribute("data-pos"))] = current.name;
+			gameBoard.refresh();
+			let val = gameBoard.checkWin();
+			if (val)
+			{
+				return announceWinner(current, val);
+			}
+			console.log("heh2");
+
+
+			xDiv.classList.remove("emphasis");
+			oDiv.classList.add("emphasis");
+			current = "computer";
+			setTimeout(() => {
+			console.log("heh3");
+
+				gameBoard.gameArray[compPlay()] = 'O';
+				gameBoard.refresh();
+
+				let val = gameBoard.checkWin();
+				if (val)return announceWinner(current, val);
+
+				oDiv.classList.remove("emphasis");
+				xDiv.classList.add("emphasis");
+				current = playerX;
+				eventListenOn();
+			}, 500);
+
+		
+		};
+
+		eventListenOn();
+	};
+
+	const compPlay = function(){
+		for(let i = 0; i < gameBoard.gameArray.length; i++)
+		{
+			if (gameBoard.gameArray[i] == '')
+			{
+				return i;
+			}
+		}
+	};
 
 	function init()
 	{
@@ -155,6 +227,7 @@ const game = (function(gameBoard, playerX, playerO){
 			decider = 2;
 			humanButton.style = "display: none";
 			compButton.style = "display: none";
+			playHC();
 		});
 
 		sampleDiv.appendChild(humanButton);
@@ -171,7 +244,14 @@ const game = (function(gameBoard, playerX, playerO){
 		}
 		else
 		{
-			div.textContent = `Player ${player.name} wins`;	
+			if (player == "computer")
+			{
+				div.textContent = `${player} wins`;	
+			}
+			else
+			{
+				div.textContent = `Player ${player.name} wins`;	
+			}
 		}
 		div.classList.add("winner-div");
 		body.appendChild(div);
