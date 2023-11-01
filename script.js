@@ -59,12 +59,14 @@ const gameBoard = (function(doc, id){
 })(document, "#game-board");
 
 const player = (function(){
+	let playerName;
 	const listSetup = function(){
 		return document.querySelectorAll("#game-board > div");
 	};
 
 	return {
 		listSetup,
+		playerName,
 	};
 })();
 
@@ -80,20 +82,22 @@ Object.setPrototypeOf(playerO, player);
 
 const game = (function(gameBoard, playerX, playerO){
 
-	let decider = 0;
 	let sampleDiv = document.querySelector(".sample");
 	let xDiv = document.createElement("div");
 	xDiv.classList.add("play-div");
-	xDiv.textContent = `Player ${playerX.name}`;
 	xDiv.classList.add("emphasis");
 	
 	
 	
 	function playHH()
 	{
+
+		if (playerX.playerName != '') xDiv.textContent = `Player ${playerX.playerName}`;
+		else xDiv.textContent = `Player ${playerX.name}`;
 		let oDiv = document.createElement("div");
 		oDiv.classList.add("play-div");
-		oDiv.textContent = `Player ${playerO.name}`;
+		if (playerO.playerName != '') oDiv.textContent = `Player ${playerO.playerName}`;
+		else oDiv.textContent = `Player ${playerO.name}`;
 		sampleDiv.appendChild(xDiv);
 		sampleDiv.appendChild(oDiv);
 		gameBoard.render();
@@ -135,6 +139,8 @@ const game = (function(gameBoard, playerX, playerO){
 	}
 
 	const playHC = function(){
+		if (playerX.playerName != '') xDiv.textContent = `Player ${playerX.playerName}`;
+		else xDiv.textContent = `Player ${playerX.name}`;
 		let oDiv = document.createElement("div");
 		oDiv.classList.add("play-div");
 		oDiv.textContent = `Computer`;
@@ -207,6 +213,30 @@ const game = (function(gameBoard, playerX, playerO){
 		}
 	};
 
+	const enterNames = function(){
+		let form = document.getElementById("names");
+		form.style = "display: block;";
+		document.querySelector("#names > button").addEventListener("click", (event) => {
+			event.preventDefault();
+			playerX.playerName = document.getElementById("name-xs").value;
+			playerO.playerName = document.getElementById("name-o").value;
+			form.style = "display: none;";
+			playHH();
+		});
+	};
+
+	const enterName = function(){
+		let form = document.getElementById("name");
+		form.style = "display: block;";
+		document.querySelector("#name > button").addEventListener("click", (event) => {
+			event.preventDefault();
+			playerX.playerName = document.getElementById("name-x").value;
+			form.style = "display: none;";
+			playHC();
+		});
+
+	};
+
 	function init()
 	{
 		let humanButton = document.createElement("button");
@@ -218,16 +248,14 @@ const game = (function(gameBoard, playerX, playerO){
 
 
 		humanButton.addEventListener("click", () => {
-			decider = 1;
 			humanButton.style = "display: none";
 			compButton.style = "display: none";
-			playHH();
+			enterNames();
 		});
 		compButton.addEventListener("click", () => {
-			decider = 2;
 			humanButton.style = "display: none";
 			compButton.style = "display: none";
-			playHC();
+			enterName();
 		});
 
 		sampleDiv.appendChild(humanButton);
