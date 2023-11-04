@@ -105,9 +105,9 @@ const game = (function(gameBoard, playerX, playerO){
 		rstButton.addEventListener("click", () => {
 	
 			let win = document.querySelector(".winner-div");
-			if (win)
+			if (win || decider == 3)
 			{
-				win.remove();
+				if (win) win.remove();
 				xDiv.remove();
 				oDiv.remove();
 
@@ -117,21 +117,19 @@ const game = (function(gameBoard, playerX, playerO){
 					div.remove();
 				}
 
+				xDiv.classList.remove("emphasis");
+				oDiv.classList.remove("emphasis");
+				xDiv.classList.add("emphasis");
+				gameBoard.clear();
+				
 				if (decider == 1)
 				{
-					xDiv.classList.remove("emphasis");
-					oDiv.classList.remove("emphasis");
-					xDiv.classList.add("emphasis");
-					gameBoard.clear();
 					playHH();
 				}
 				else 
-				{
-					xDiv.classList.remove("emphasis");
-					oDiv.classList.remove("emphasis");
-					xDiv.classList.add("emphasis");
-					gameBoard.clear();
-					playHC();
+				{					
+					if (decider == 3)playHC2();
+					else playHC();
 				}
 			}
 			else
@@ -197,6 +195,82 @@ const game = (function(gameBoard, playerX, playerO){
 		}
 
 	}
+
+	const playHC2 = function(){
+		decider = 3;
+
+		const eventListenOn = function() {
+			for (let div of boardDivs)
+			{
+				div.addEventListener("click", eventFtn);
+			}
+		};
+		const eventListenOff = function() {
+			for(let x of boardDivs)
+			{
+				x.removeEventListener("click", eventFtn);
+			}
+		};
+		
+		if (playerO.playerName != '') oDiv.textContent = `Player ${playerX.playerName}`;
+		else oDiv.textContent = `Player ${playerO.name}`;
+		oDiv.classList.add("play-div");
+		xDiv.textContent = `Computer`;
+		sampleDiv.appendChild(xDiv);
+		sampleDiv.appendChild(oDiv);
+		gameBoard.render();
+
+		let boardDivs = player.listSetup();
+		current = "computer";
+
+		setTimeout(() => {
+
+			gameBoard.gameArray[compPlay()] = 'O';
+			gameBoard.refresh();
+
+			let val = gameBoard.checkWin();
+			if (val)return announceWinner(current, val);
+
+			xDiv.classList.remove("emphasis");
+			oDiv.classList.add("emphasis");
+			current = playerX;
+			eventListenOn();
+		}, 500);
+		
+
+		const eventFtn = function(){
+			if (gameBoard.gameArray[Number(this.getAttribute("data-pos"))] != '') return;
+			eventListenOff();
+			gameBoard.gameArray[Number(this.getAttribute("data-pos"))] = current.name;
+			gameBoard.refresh();
+			let val = gameBoard.checkWin();
+			if (val)
+			{
+				return announceWinner(current, val);
+			}
+
+			oDiv.classList.remove("emphasis");
+			xDiv.classList.add("emphasis");
+			current = "computer";
+			setTimeout(() => {
+
+				gameBoard.gameArray[compPlay()] = 'O';
+				gameBoard.refresh();
+
+				let val = gameBoard.checkWin();
+				if (val)return announceWinner(current, val);
+
+				xDiv.classList.remove("emphasis");
+				oDiv.classList.add("emphasis");
+				current = playerX;
+				eventListenOn();
+			}, 500);
+
+		
+		};
+
+		eventListenOn();
+	};
 
 	const playHC = function(){
 
@@ -291,10 +365,18 @@ const game = (function(gameBoard, playerX, playerO){
 		form.style = "display: block;";
 		document.querySelector("#name > button").addEventListener("click", (event) => {
 			event.preventDefault();
-			playerX.playerName = document.getElementById("name-x").value;
 			form.style = "display: none;";
 			createButtons();
-			playHC();
+			if (document.getElementById("radx").checked)
+			{
+				playerX.playerName = document.getElementById("name-x").value;
+				playHC();
+			}
+			else
+			{
+				playerO.playerName = document.getElementById("name-x").value;
+				playHC2();
+			}
 		});
 
 	};
