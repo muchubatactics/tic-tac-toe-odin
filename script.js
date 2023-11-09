@@ -104,10 +104,10 @@ const game = (function(gameBoard, playerX, playerO){
 		rstButton.textContent = "restart";
 		rstButton.addEventListener("click", () => {
 	
-			let win = document.querySelector(".winner-div");
-			if (win || decider == 3)
+			let win = document.querySelector(".announce");
+			if (win.textContent || decider == 3)
 			{
-				if (win) win.remove();
+				if (win) win.textContent = '';
 				xDiv.remove();
 				oDiv.remove();
 
@@ -212,7 +212,7 @@ const game = (function(gameBoard, playerX, playerO){
 			}
 		};
 		
-		if (playerO.playerName != '') oDiv.textContent = `Player ${playerX.playerName}`;
+		if (playerO.playerName != '') oDiv.textContent = `Player ${playerO.playerName}`;
 		else oDiv.textContent = `Player ${playerO.name}`;
 		oDiv.classList.add("play-div");
 		xDiv.textContent = `Computer`;
@@ -225,7 +225,7 @@ const game = (function(gameBoard, playerX, playerO){
 
 		setTimeout(() => {
 
-			gameBoard.gameArray[compPlay()] = 'O';
+			gameBoard.gameArray[compPlay()] = playerX.name;
 			gameBoard.refresh();
 
 			let val = gameBoard.checkWin();
@@ -233,7 +233,7 @@ const game = (function(gameBoard, playerX, playerO){
 
 			xDiv.classList.remove("emphasis");
 			oDiv.classList.add("emphasis");
-			current = playerX;
+			current = playerO;
 			eventListenOn();
 		}, 500);
 		
@@ -254,7 +254,7 @@ const game = (function(gameBoard, playerX, playerO){
 			current = "computer";
 			setTimeout(() => {
 
-				gameBoard.gameArray[compPlay()] = 'O';
+				gameBoard.gameArray[compPlay()] = playerX.name;
 				gameBoard.refresh();
 
 				let val = gameBoard.checkWin();
@@ -262,7 +262,7 @@ const game = (function(gameBoard, playerX, playerO){
 
 				xDiv.classList.remove("emphasis");
 				oDiv.classList.add("emphasis");
-				current = playerX;
+				current = playerO;
 				eventListenOn();
 			}, 500);
 
@@ -410,8 +410,7 @@ const game = (function(gameBoard, playerX, playerO){
 	}
 
 	const announceWinner = function(player, val){
-		let div = document.createElement("div");
-		let body = document.querySelector("body");
+		let div = document.querySelector(".announce");
 		if (val == 2)
 		{
 			div.textContent = `it's a tie`;	
@@ -427,8 +426,6 @@ const game = (function(gameBoard, playerX, playerO){
 				div.textContent = `Player ${player.name} wins`;	
 			}
 		}
-		div.classList.add("winner-div");
-		body.appendChild(div);
 
 	}; 
 

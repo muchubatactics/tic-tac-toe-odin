@@ -8,35 +8,48 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>tic tac toe</h1>
-    <form id="names" style="display: none;">
-        <div>
-            <label for="name-xs">Enter Name (player X)</label>
-            <input type="text" id="name-xs">
-        </div>
-        <div>
-            <label for="name-o">Enter Name (player O)</label>
-            <input type="text" id="name-o">
-        </div>
-        <button type="submit">START</button>
-    </form>
-    <form id="name" style="display: none;">
-        <div>
-            <label for="name-x">Enter Name</label>
-            <input type="text" id="name-x">
-        </div>
-        <div>
-           <legend>Play as</legend> 
-           <label for="radx">X</label>
-           <input type="radio" name="playas" id="radx" value="1" checked>
- 
-           <label for="rado">O</label>
-           <input type="radio" name="playas" id="rado" value="2">
-        </div>
-        <button type="submit">START</button>
-    </form>
-    <div class="bttns"></div>
-    <div class="sample"></div>
-    <div id="game-board"></div>
+    <div class="header">
+        Tic Tac Toe
+    </div>
+    <div class="middle">
+        <form id="names" style="display: none;">
+            <div>
+                <label for="name-xs">Enter Name (player X)</label>
+                <input type="text" id="name-xs">
+            </div>
+            <div>
+                <label for="name-o">Enter Name (player O)</label>
+                <input type="text" id="name-o">
+            </div>
+            <button type="submit">START</button>
+        </form>
+        <form id="name" style="display: none;">
+            <div>
+                <label for="name-x">Enter Name</label>
+                <input type="text" id="name-x">
+            </div>
+            <div>
+               <legend>Play as</legend>
+               <div>
+                   <div>
+                       <input type="radio" name="playas" id="radx" value="1" checked>
+                       <label for="radx">X</label>
+                   </div>
+                   <div>
+                       <input type="radio" name="playas" id="rado" value="2">
+                       <label for="rado">O</label>
+                   </div>
+               </div>
+            </div>
+            <button type="submit">START</button>
+        </form>
+        <div class="bttns"></div>
+        <div class="sample"></div>
+        <div id="game-board"></div>
+        <div class="announce"></div>
+    </div>
+    <div class="footer">
+        <a href="https://github.com/muchubatactics">muchubatactics</a>2023
+    </div>
 </body>
 </html>
