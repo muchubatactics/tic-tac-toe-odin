@@ -434,7 +434,14 @@ const game = (function(gameBoard, playerX, playerO){
 			}
 			else
 			{
-				div.textContent = `Player ${player.name} wins`;	
+				if (player.playerName)
+				{
+					div.textContent = `Player ${player.playerName} wins`;	
+				}
+				else
+				{
+					div.textContent = `Player ${player.name} wins`;	
+				}
 			}
 		}
 
