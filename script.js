@@ -312,7 +312,6 @@ const game = (function(gameBoard, playerX, playerO){
 
 		const eventFtn = function(){
 
-			console.log("hjererfe");
 			if (gameBoard.gameArray[Number(this.getAttribute("data-pos"))] != '') return;
 			eventListenOff();
 			gameBoard.gameArray[Number(this.getAttribute("data-pos"))] = current.name;
