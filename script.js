@@ -28,7 +28,7 @@ const gameBoard = (function(doc, id){
 		}
 	};
 
-	const checkWin = function(){
+	const checkWin = function(gameArray){
 		let len = gameArray.filter((x) => x != '').length;
 		if (len < 5) return 0;
 		else
@@ -158,6 +158,9 @@ const game = (function(gameBoard, playerX, playerO){
 		sampleDiv.appendChild(xDiv);
 		sampleDiv.appendChild(oDiv);
 		gameBoard.render();
+		gameBoard.refresh();
+
+
 		let boardDivs = player.listSetup();
 		current = playerX;
 
@@ -165,7 +168,7 @@ const game = (function(gameBoard, playerX, playerO){
 			if (gameBoard.gameArray[Number(this.getAttribute("data-pos"))] != '') return;
 			gameBoard.gameArray[Number(this.getAttribute("data-pos"))] = current.name;
 			gameBoard.refresh();
-			let val = gameBoard.checkWin();
+			let val = gameBoard.checkWin(gameBoard.gameArray);
 			if (val)
 			{
 				for(let x of boardDivs)
@@ -190,13 +193,13 @@ const game = (function(gameBoard, playerX, playerO){
 
 		for (let div of boardDivs)
 		{
-			console.log(div);
 			div.addEventListener("click", eventFtn);
 		}
 
 	}
 
 	const playHC2 = function(){
+
 		decider = 3;
 
 		const eventListenOn = function() {
@@ -219,16 +222,20 @@ const game = (function(gameBoard, playerX, playerO){
 		sampleDiv.appendChild(xDiv);
 		sampleDiv.appendChild(oDiv);
 		gameBoard.render();
+		gameBoard.refresh();
+
 
 		let boardDivs = player.listSetup();
 		current = "computer";
 
 		setTimeout(() => {
 
-			gameBoard.gameArray[compPlay()] = playerX.name;
+			// gameBoard.gameArray[compPlay()] = playerX.name;
+			gameBoard.gameArray[unbeatable(playerX.name)] = playerX.name;
+
 			gameBoard.refresh();
 
-			let val = gameBoard.checkWin();
+			let val = gameBoard.checkWin(gameBoard.gameArray);
 			if (val)return announceWinner(current, val);
 
 			xDiv.classList.remove("emphasis");
@@ -243,7 +250,7 @@ const game = (function(gameBoard, playerX, playerO){
 			eventListenOff();
 			gameBoard.gameArray[Number(this.getAttribute("data-pos"))] = current.name;
 			gameBoard.refresh();
-			let val = gameBoard.checkWin();
+			let val = gameBoard.checkWin(gameBoard.gameArray);
 			if (val)
 			{
 				return announceWinner(current, val);
@@ -254,10 +261,12 @@ const game = (function(gameBoard, playerX, playerO){
 			current = "computer";
 			setTimeout(() => {
 
-				gameBoard.gameArray[compPlay()] = playerX.name;
+				// gameBoard.gameArray[compPlay()] = playerX.name;
+				gameBoard.gameArray[unbeatable(playerX.name)] = playerX.name;
+
 				gameBoard.refresh();
 
-				let val = gameBoard.checkWin();
+				let val = gameBoard.checkWin(gameBoard.gameArray);
 				if (val)return announceWinner(current, val);
 
 				xDiv.classList.remove("emphasis");
@@ -274,6 +283,7 @@ const game = (function(gameBoard, playerX, playerO){
 
 	const playHC = function(){
 
+
 		if (playerX.playerName != '') xDiv.textContent = `Player ${playerX.playerName}`;
 		else xDiv.textContent = `Player ${playerX.name}`;
 		oDiv.classList.add("play-div");
@@ -281,6 +291,7 @@ const game = (function(gameBoard, playerX, playerO){
 		sampleDiv.appendChild(xDiv);
 		sampleDiv.appendChild(oDiv);
 		gameBoard.render();
+		gameBoard.refresh();
 
 		let boardDivs = player.listSetup();
 		current = playerX;
@@ -300,29 +311,30 @@ const game = (function(gameBoard, playerX, playerO){
 		
 
 		const eventFtn = function(){
-			console.log("heh1");
+
+			console.log("hjererfe");
 			if (gameBoard.gameArray[Number(this.getAttribute("data-pos"))] != '') return;
 			eventListenOff();
 			gameBoard.gameArray[Number(this.getAttribute("data-pos"))] = current.name;
 			gameBoard.refresh();
-			let val = gameBoard.checkWin();
+			let val = gameBoard.checkWin(gameBoard.gameArray);
 			if (val)
 			{
 				return announceWinner(current, val);
 			}
-			console.log("heh2");
 
 
 			xDiv.classList.remove("emphasis");
 			oDiv.classList.add("emphasis");
 			current = "computer";
 			setTimeout(() => {
-			console.log("heh3");
 
-				gameBoard.gameArray[compPlay()] = 'O';
+				// gameBoard.gameArray[compPlay()] = 'O';
+				gameBoard.gameArray[unbeatable(playerO.name)] = 'O';
+
 				gameBoard.refresh();
 
-				let val = gameBoard.checkWin();
+				let val = gameBoard.checkWin(gameBoard.gameArray);
 				if (val)return announceWinner(current, val);
 
 				oDiv.classList.remove("emphasis");
@@ -429,6 +441,87 @@ const game = (function(gameBoard, playerX, playerO){
 
 	}; 
 
+
+	const unbeatable = function(playerName){
+		let copy = gameBoard.gameArray.slice();
+
+		let maxIndex = 0;
+		let minIndex = 0;
+		let depth = 0;
+		let move;
+
+		let obj = {game: copy, current: playerName};
+
+		const switchCurrent = function(current ){
+			return current == 'X' ? 'O' : 'X';
+		};
+
+		const score = function(game){
+			if(gameBoard.checkWin(game) == 2) return 0;
+			let x = game.filter((x) => x == 'X').length;
+			let o = game.filter((x) => x == 'O').length;
+			if (playerName == 'X') return x > o ? 10 : -10;
+			else return x > o ? -10 : 10;
+
+		};
+
+		const minimax = function(obj){
+			depth++;
+			if(gameBoard.checkWin(obj.game)) return score(obj.game);
+
+
+			let moves = [];
+			let scores = [];
+
+			for (let i = 0; i < obj.game.length; i++)
+			{
+				if (obj.game[i] == '')
+				{
+
+					let newGameState = {game: obj.game.slice(), current: switchCurrent(obj.current)};
+					newGameState.game[i] = obj.current;
+					moves.push(i);
+					scores.push(minimax(newGameState));
+				}
+			}
+
+			if (obj.current == playerName)
+			{
+
+				let max = scores[0];
+				move = moves[0];
+				for (let i = 0; i < scores.length; i++)
+				{
+					if (scores[i] > max)
+					{
+						max = scores[i];
+						maxIndex = i;
+						move = moves[maxIndex];
+					}
+				}
+
+				return max;
+			}
+			else
+			{
+				
+				let min = scores[0];
+				for (let i = 0; i < scores.length; i++)
+				{
+					if (scores[i] < min)
+					{
+						min = scores[i];
+						minIndex = i;
+					}
+				}
+				return min;
+			}
+
+		};
+
+		minimax(obj);
+		return move;
+	}
 
 	return {
 		init,
